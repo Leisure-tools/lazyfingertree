@@ -8,103 +8,197 @@ You provide your own object that supports the Measurer[Value, Measurement] inter
 
 Here's the go doc:
 
-package lazyfingertree // import "github.com/zot/lazyfingertree"
+# lazyfingertree
+--
+    import "github.com/zot/lazyfingertree"
 
-Package lazyfingertree implements lazy finger trees. See the [fingertree
-paper] for details.
+Package lazyfingertree implements lazy finger trees. See the [fingertree paper]
+for details.
 
 [fingertree paper]: http://www.soi.city.ac.uk/~ross/papers/FingerTree.html
 
-VARIABLES
+## Usage
 
+```go
 var ErrBadMeasurer = fmt.Errorf("%w, bad measurer", ErrFingerTree)
+```
+
+```go
 var ErrBadValue = fmt.Errorf("%w, bad value", ErrFingerTree)
+```
+
+```go
 var ErrEmptyTree = fmt.Errorf("%w, empty tree", ErrFingerTree)
+```
+
+```go
 var ErrExpectedNode = fmt.Errorf("%w, expected a node", ErrFingerTree)
+```
+
+```go
 var ErrFingerTree = errors.New("finger tree")
+```
+
+```go
 var ErrUnsupported = fmt.Errorf("%w, unsupported operation", ErrFingerTree)
+```
 
-FUNCTIONS
+#### func  Diag
 
+```go
 func Diag(v any) string
-    Return a string that represents a value. Diag calls the diagstr method if
-    the value implements it:
+```
+Return a string that represents a value. Diag calls the diagstr method if the
+value implements it:
 
-        diagstr() string
+    diagstr() string
 
-    otherwise, it calls fmt.Sprintf("%v", v)
+otherwise, it calls fmt.Sprintf("%v", v)
 
+#### type FingerTree
 
-TYPES
-
+```go
 type FingerTree[MS Measurer[V, M], V, M any] struct {
-	// Has unexported fields.
 }
-    FingerTree is a parameterized wrapper on a low-level finger tree.
+```
 
+FingerTree is a parameterized wrapper on a low-level finger tree.
+
+#### func  FromArray
+
+```go
 func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[MS, V, M]
-    Create a finger tree. You shouldn't need to provide the type parameters, Go
-    should be able to infer them from your arguments. So you should just be able
-    to say,
+```
+Create a finger tree. You shouldn't need to provide the type parameters, Go
+should be able to infer them from your arguments. So you should just be able to
+say,
 
-        t := FromArray(myMeasurer, []Plant{plant1, plant2})
+    t := FromArray(myMeasurer, []Plant{plant1, plant2})
 
+#### func (FingerTree[MS, V, M]) AddFirst
+
+```go
 func (t FingerTree[MS, V, M]) AddFirst(value any) FingerTree[MS, V, M]
-    Add a value to the start of the tree.
+```
+Add a value to the start of the tree.
 
+#### func (FingerTree[MS, V, M]) AddLast
+
+```go
 func (t FingerTree[MS, V, M]) AddLast(value any) FingerTree[MS, V, M]
-    Add a value to the and of the tree.
+```
+Add a value to the and of the tree.
 
+#### func (FingerTree[MS, V, M]) Concat
+
+```go
 func (t FingerTree[MS, V, M]) Concat(other FingerTree[MS, V, M]) FingerTree[MS, V, M]
-    Join two finger trees together
+```
+Join two finger trees together
 
+#### func (FingerTree[MS, V, M]) DropUntil
+
+```go
 func (t FingerTree[MS, V, M]) DropUntil(pred Predicate[M]) FingerTree[MS, V, M]
-    Discard all the initial values in the tree that do not satisfy the predicate
+```
+Discard all the initial values in the tree that do not satisfy the predicate
 
+#### func (FingerTree[MS, V, M]) Each
+
+```go
 func (t FingerTree[MS, V, M]) Each(iter IterFunc[V])
-    Iterate through the tree starting at the beginning
+```
+Iterate through the tree starting at the beginning
 
+#### func (FingerTree[MS, V, M]) EachReverse
+
+```go
 func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V])
-    Iterate through the tree starting at the end
+```
+Iterate through the tree starting at the end
 
+#### func (FingerTree[MS, V, M]) IsEmpty
+
+```go
 func (t FingerTree[MS, V, M]) IsEmpty() bool
-    Return whether the tree is empty
+```
+Return whether the tree is empty
 
+#### func (FingerTree[MS, V, M]) Measure
+
+```go
 func (t FingerTree[MS, V, M]) Measure() M
-    Return the measure of all the tree's values
+```
+Return the measure of all the tree's values
 
+#### func (FingerTree[MS, V, M]) PeekFirst
+
+```go
 func (t FingerTree[MS, V, M]) PeekFirst() V
-    Return the first value in the tree. Make sure to test whether the tree is
-    empty because this will panic if it is.
+```
+Return the first value in the tree. Make sure to test whether the tree is empty
+because this will panic if it is.
 
+#### func (FingerTree[MS, V, M]) PeekLast
+
+```go
 func (t FingerTree[MS, V, M]) PeekLast() V
-    Return the last value in the tree. Make sure to test whether the tree is
-    empty because this will panic if it is.
+```
+Return the last value in the tree. Make sure to test whether the tree is empty
+because this will panic if it is.
 
+#### func (FingerTree[MS, V, M]) RemoveFirst
+
+```go
 func (t FingerTree[MS, V, M]) RemoveFirst() FingerTree[MS, V, M]
-    Remove the first value in the tree. Make sure to test whether the tree is
-    empty because this will panic if it is.
+```
+Remove the first value in the tree. Make sure to test whether the tree is empty
+because this will panic if it is.
 
+#### func (FingerTree[MS, V, M]) RemoveLast
+
+```go
 func (t FingerTree[MS, V, M]) RemoveLast() FingerTree[MS, V, M]
-    Remove the last value in the tree. Make sure to test whether the tree is
-    empty because this will panic if it is.
+```
+Remove the last value in the tree. Make sure to test whether the tree is empty
+because this will panic if it is.
 
+#### func (FingerTree[MS, V, M]) Split
+
+```go
 func (t FingerTree[MS, V, M]) Split(predicate Predicate[M]) (FingerTree[MS, V, M], FingerTree[MS, V, M])
-    Split the tree. The first tree is all the starting values that do not
-    satisfy the predicate. The second tree is the first value that satisfies the
-    predicate, followed by the rest of the values.
+```
+Split the tree. The first tree is all the starting values that do not satisfy
+the predicate. The second tree is the first value that satisfies the predicate,
+followed by the rest of the values.
 
+#### func (FingerTree[MS, V, M]) TakeUntil
+
+```go
 func (t FingerTree[MS, V, M]) TakeUntil(pred Predicate[M]) FingerTree[MS, V, M]
-    Return all the initial values in the tree that do not satisfy the predicate
+```
+Return all the initial values in the tree that do not satisfy the predicate
 
+#### func (FingerTree[MS, V, M]) ToSlice
+
+```go
 func (t FingerTree[MS, V, M]) ToSlice() []V
-    Return a slice containing all of the values in the tree
+```
+Return a slice containing all of the values in the tree
 
+#### type IterFunc
+
+```go
 type IterFunc[V any] func(value V) bool
-    An IterFunc is a function that takes a value and returns true or false. It's
-    used by [Each] and [EachReverse]. Returning true means to continue
-    iteration. Returning false means to stop.
+```
 
+An IterFunc is a function that takes a value and returns true or false. It's
+used by [Each] and [EachReverse]. Returning true means to continue iteration.
+Returning false means to stop.
+
+#### type Measurer
+
+```go
 type Measurer[Value, Measure any] interface {
 	// The "zero" measure
 	Identity() Measure
@@ -115,9 +209,15 @@ type Measurer[Value, Measure any] interface {
 	// Add two measures together
 	Sum(a Measure, b Measure) Measure
 }
-    The measurer interface
+```
 
+The measurer interface
+
+#### type Predicate
+
+```go
 type Predicate[M any] func(measure M) bool
-    A Predicate is a function that takes a measure and returns true or false.
-    It's used by [Split], [TakeUntil], and [DropUntil].
+```
 
+A Predicate is a function that takes a measure and returns true or false. It's
+used by [Split], [TakeUntil], and [DropUntil].
