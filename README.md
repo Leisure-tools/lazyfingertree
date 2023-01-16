@@ -6,55 +6,118 @@ The public API is generic but the implementation is currently not generic becaus
 
 You provide your own object that supports the Measurer[Value, Measurement] interface. `Values` are in the leaves of the tree and your `Measurer` computes the `Measurements` in the `Measure()` and `Sum()` methods. `Measurements` can be any go objects but they *should be immutable* or there could be trouble. Please see [Ralf Hinze's and Ross Paterson's finger tree paper](http://www.soi.city.ac.uk/~ross/papers/FingerTree.html) (and the test code) for more information.
 
-The measurement interface:
+Here's the go doc:
 
-```go
-type Measurer[V, M any] interface {
-	Identity() M
-	// measuring a value could technically produce an error but really should not
-	// make sure to validate inputs or to use a panic if you need error support
-	Measure(value V) M
-	Sum(a M, b M) M
+package lazyfingertree // import "github.com/zot/lazyfingertree"
+
+Package lazyfingertree implements lazy finger trees. See the [fingertree
+paper] for details.
+
+[fingertree paper]: http://www.soi.city.ac.uk/~ross/papers/FingerTree.html
+
+VARIABLES
+
+var ErrBadMeasurer = fmt.Errorf("%w, bad measurer", ErrFingerTree)
+var ErrBadValue = fmt.Errorf("%w, bad value", ErrFingerTree)
+var ErrEmptyTree = fmt.Errorf("%w, empty tree", ErrFingerTree)
+var ErrExpectedNode = fmt.Errorf("%w, expected a node", ErrFingerTree)
+var ErrFingerTree = errors.New("finger tree")
+var ErrUnsupported = fmt.Errorf("%w, unsupported operation", ErrFingerTree)
+
+FUNCTIONS
+
+func Diag(v any) string
+    Return a string that represents a value. Diag calls the diagstr method if
+    the value implements it:
+
+        diagstr() string
+
+    otherwise, it calls fmt.Sprintf("%v", v)
+
+
+TYPES
+
+type FingerTree[MS Measurer[V, M], V, M any] struct {
+	// Has unexported fields.
 }
-```
+    FingerTree is a parameterized wrapper on a low-level finger tree.
 
-You create a finger tree with `FromArray`, given a measurer and a slice of values (you shouldn't need to provide the type parameters, Go should be able to infer them from your arguments):
+func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[MS, V, M]
+    Create a finger tree. You shouldn't need to provide the type parameters, Go
+    should be able to infer them from your arguments. So you should just be able
+    to say,
 
-```go
-func FromArray[MS Measurer[V, M], V, M any](measurer MS, values[]V) FingerTree[MS, V, M]
-```
+        t := FromArray(myMeasurer, []Plant{plant1, plant2})
 
-You can print a tree with the `Diag(tree)` function (if any of your data implements the `diagstr() string` method, it will use that while printing the tree). Example:
+func (t FingerTree[MS, V, M]) AddFirst(value any) FingerTree[MS, V, M]
+    Add a value to the start of the tree.
 
-```go
-t := FromArray(myMeasurer, []Plant{plant1, plant2})
-println(Diag(t))
-```
+func (t FingerTree[MS, V, M]) AddLast(value any) FingerTree[MS, V, M]
+    Add a value to the and of the tree.
 
-`FingerTree[MS Measurerer[V, M], V, M any]` supports these methods:
+func (t FingerTree[MS, V, M]) Concat(other FingerTree[MS, V, M]) FingerTree[MS, V, M]
+    Join two finger trees together
 
-```go
-AddFirst(value any) FingerTree[MS, V, M]
-AddLast(value any) FingerTree[MS, V, M]
-RemoveFirst() FingerTree[MS, V, M]
-RemoveLast() FingerTree[MS, V, M]
-PeekFirst() V
-PeekLast() V
-Concat(other FingerTree[MS, V, M]) FingerTree[MS, V, M]
-Split(predicate Predicate[M]) (FingerTree[MS, V, M], FingerTree[MS, V, M])
-ToSlice() []V
-IsEmpty() bool
-Measure() M
-TakeUntil(pred Predicate[M]) FingerTree[MS, V, M]
-DropUntil(pred Predicate[M]) FingerTree[MS, V, M]
-Each(iter IterFunc[V])
-EachReverse(iter IterFunc[V])
-```
+func (t FingerTree[MS, V, M]) DropUntil(pred Predicate[M]) FingerTree[MS, V, M]
+    Discard all the initial values in the tree that do not satisfy the predicate
 
-Precicates operate on measurements and IterFuncs operate on values and are defined as:
+func (t FingerTree[MS, V, M]) Each(iter IterFunc[V])
+    Iterate through the tree starting at the beginning
 
-```go
-type Predicate[M any] func(measure M) bool
+func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V])
+    Iterate through the tree starting at the end
+
+func (t FingerTree[MS, V, M]) IsEmpty() bool
+    Return whether the tree is empty
+
+func (t FingerTree[MS, V, M]) Measure() M
+    Return the measure of all the tree's values
+
+func (t FingerTree[MS, V, M]) PeekFirst() V
+    Return the first value in the tree. Make sure to test whether the tree is
+    empty because this will panic if it is.
+
+func (t FingerTree[MS, V, M]) PeekLast() V
+    Return the last value in the tree. Make sure to test whether the tree is
+    empty because this will panic if it is.
+
+func (t FingerTree[MS, V, M]) RemoveFirst() FingerTree[MS, V, M]
+    Remove the first value in the tree. Make sure to test whether the tree is
+    empty because this will panic if it is.
+
+func (t FingerTree[MS, V, M]) RemoveLast() FingerTree[MS, V, M]
+    Remove the last value in the tree. Make sure to test whether the tree is
+    empty because this will panic if it is.
+
+func (t FingerTree[MS, V, M]) Split(predicate Predicate[M]) (FingerTree[MS, V, M], FingerTree[MS, V, M])
+    Split the tree. The first tree is all the starting values that do not
+    satisfy the predicate. The second tree is the first value that satisfies the
+    predicate, followed by the rest of the values.
+
+func (t FingerTree[MS, V, M]) TakeUntil(pred Predicate[M]) FingerTree[MS, V, M]
+    Return all the initial values in the tree that do not satisfy the predicate
+
+func (t FingerTree[MS, V, M]) ToSlice() []V
+    Return a slice containing all of the values in the tree
 
 type IterFunc[V any] func(value V) bool
-```
+    An IterFunc is a function that takes a value and returns true or false. It's
+    used by [Each] and [EachReverse]. Returning true means to continue
+    iteration. Returning false means to stop.
+
+type Measurer[Value, Measure any] interface {
+	// The "zero" measure
+	Identity() Measure
+	// Return the measure for a value.
+	// Measuring a value could technically produce an error but really should not.
+	// Make sure to validate inputs or to use a panic if you need error support.
+	Measure(value Value) Measure
+	// Add two measures together
+	Sum(a Measure, b Measure) Measure
+}
+    The measurer interface
+
+type Predicate[M any] func(measure M) bool
+    A Predicate is a function that takes a measure and returns true or false.
+    It's used by [Split], [TakeUntil], and [DropUntil].
+
