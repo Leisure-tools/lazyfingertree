@@ -4,18 +4,18 @@ import "fmt"
 
 // An empty finger-tree.
 type emptyTree struct {
-	_measurement Measurement
+	_measurement measurement
 }
 
 func newEmptyTree(measurer measurer) fingerTree {
-	return &emptyTree{newMeasurement(measurer, measurer.Identity())}
+	return &emptyTree{measurement{measurer, measurer.Identity()}}
 }
 
 func (e *emptyTree) diagstr() string {
 	return "emptyTree{}"
 }
 
-func (e *emptyTree) measurement() Measurement {
+func (e *emptyTree) measurement() measurement {
 	return e._measurement
 }
 

@@ -7,7 +7,7 @@ import (
 // A digit is a measured container of one to four elements.
 // this is not a FingerTree, it only shares some of the methods
 type digit struct {
-	_measurement Measurement
+	_measurement measurement
 	items []any
 }
 
@@ -16,7 +16,7 @@ func newDigit(measurer measurer, items []any) *digit {
 	for _, item := range items {
 		m = measurer.Sum(m, measurer.Measure(item))
 	}
-	return &digit{Measurement{measurer, m}, items}
+	return &digit{measurement{measurer, m}, items}
 }
 
 func (d *digit) diagstr() string {
@@ -29,7 +29,7 @@ func (d *digit) diagstr() string {
 		} else {
 			b.WriteString(", ")
 		}
-		b.WriteString(diag(i))
+		b.WriteString(Diag(i))
 	}
 	b.WriteString("}")
 	return b.String()
@@ -39,7 +39,7 @@ func (d *digit) len() int {
 	return len(d.items)
 }
 
-func (d *digit) getMeasurement() Measurement {
+func (d *digit) getMeasurement() measurement {
 	return d._measurement
 }
 

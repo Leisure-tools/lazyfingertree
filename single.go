@@ -4,15 +4,15 @@ import "fmt"
 
 // A finger-tree which contains exactly one element.
 type singleTree struct {
-	_measurement Measurement
+	_measurement measurement
 	value any
 }
 
 func newSingleTree(measurer measurer, value any) *singleTree {
-	return &singleTree{measurement(measurer, value), value}
+	return &singleTree{measurement{measurer, measurer.Measure(value)}, value}
 }
 
-func (s *singleTree) measurement() Measurement {
+func (s *singleTree) measurement() measurement {
 	return s._measurement
 }
 
@@ -38,7 +38,7 @@ func makeEmptyMid(m measurer) fingerTree {
 }
 
 func (s *singleTree) diagstr() string {
-	return fmt.Sprintf("singleTree{%v}", diag(s.value))
+	return fmt.Sprintf("singleTree{%v}", Diag(s.value))
 }
 
 func (s *singleTree) AddFirst(value any) fingerTree {
@@ -84,7 +84,7 @@ func (s *singleTree) splitTree(predicate predicate, initial any) (fingerTree, an
 }
 
 func (s *singleTree) Split(predicate predicate) (fingerTree, fingerTree) {
-	if predicate(Measure(s)) {
+	if predicate(s._measurement.value) {
 		return s._measurement.empty(), s
 	}
 	return s, s._measurement.empty()

@@ -71,7 +71,7 @@ func verifyTree(t *testing.T, tree FingerTree[width[int, int], int, int], start 
 		if !tree.IsEmpty() {
 			t.Log("Expected tree to be empty but it is not")
 			debug.PrintStack()
-			t.Fail()
+			t.FailNow()
 		}
 		return
 	}
@@ -105,7 +105,6 @@ func testTree(t *testing.T, size int) {
 
 func TestSimple(t *testing.T) {
 	for i := 1; i <= 99; i++ {
-		//fmt.Println("Testing tree: ", i)
 		testTree(t, i)
 	}
 }

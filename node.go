@@ -4,7 +4,7 @@ import "strings"
 
 // A node is a measured container of either 2 or 3 sub-finger-trees.
 type node struct {
-	_measurement Measurement
+	_measurement measurement
 	items []any
 }
 
@@ -21,7 +21,7 @@ func newNode(measurer measurer, items []any) *node {
 	for _, item := range items {
 		m = measurer.Sum(m, measurer.Measure(item))
 	}
-	return &node{Measurement{measurer, m}, items}
+	return &node{measurement{measurer, m}, items}
 }
 
 func (n *node) diagstr() string {
@@ -34,7 +34,7 @@ func (n *node) diagstr() string {
 		} else {
 			b.WriteString(", ")
 		}
-		b.WriteString(diag(i))
+		b.WriteString(Diag(i))
 	}
 	b.WriteString("}")
 	return b.String()

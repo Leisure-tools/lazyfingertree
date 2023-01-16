@@ -18,7 +18,7 @@ func newDelayed(f fingerTreeFunc) *delayed {
 }
 
 func (f *delayed) diagstr() string {
-	return fmt.Sprintf("delayed{%s}", diag(f.force()))
+	return fmt.Sprintf("delayed{%s}", Diag(f.force()))
 }
 
 func (f *delayed) force() fingerTree {
@@ -32,7 +32,7 @@ func (f *delayed) splitTree(predicate predicate, initial any) (fingerTree, any, 
 	return f.force().splitTree(predicate, initial)
 }
 
-func (f *delayed) measurement() Measurement {
+func (f *delayed) measurement() measurement {
 	return f.force().measurement()
 }
 

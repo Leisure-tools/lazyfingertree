@@ -31,7 +31,10 @@ type diagable interface {
 	diagstr() string
 }
 
-func diag(v any) string {
+// Return a string that represents a value. Diag calls the diagstr method if the value implements it:
+//   diagstr() string
+// otherwise, it calls fmt.Sprintf("%v", v)
+func Diag(v any) string {
 	if d, ok := v.(diagable); !ok {
 		return fmt.Sprintf("%v", v)
 	} else {
@@ -39,38 +42,12 @@ func diag(v any) string {
 	}
 }
 
-type PluggableMeasurer struct {
-	identity any
-	measure func(value any) any
-	sum func(a any, b any) any
-}
-
-func (m PluggableMeasurer) Identity() any {
-	return m.identity
-}
-
-func (m PluggableMeasurer) Measure(v any) any {
-	return m.measure(v)
-}
-
-func (m PluggableMeasurer) Sum(a any, b any) any {
-	return m.sum(a, b)
-}
-
-type Measurement struct {
+type measurement struct {
 	measurer measurer
 	value any
 }
 
-func newMeasurement(measurer measurer, m any) Measurement {
-	return Measurement{measurer, m}
-}
-
-func measurement(measurer measurer, v any) Measurement {
-	return newMeasurement(measurer, measurer.Measure(v))
-}
-
-func (m Measurement) empty() fingerTree {
+func (m measurement) empty() fingerTree {
 	return newEmptyTree(m.measurer)
 }
 
@@ -85,11 +62,11 @@ type fingerTree interface {
 	Concat(other fingerTree) fingerTree
 	Split(predicate predicate) (fingerTree, fingerTree)
 	ToSlice() []any
-	measurement() Measurement
+	measurement() measurement
 	splitTree(predicate predicate, initial any) (fingerTree, any, fingerTree)
 }
 
-func IsEmpty(tree fingerTree) bool {
+func isEmpty(tree fingerTree) bool {
 	_, ok := force(tree).(*emptyTree)
 	return ok
 }
@@ -97,10 +74,6 @@ func IsEmpty(tree fingerTree) bool {
 func isSingle(tree fingerTree) bool {
 	_, ok := tree.(*singleTree)
 	return ok
-}
-
-func Measure(tree fingerTree) any {
-	return tree.measurement().value
 }
 
 func measurerFor(tree fingerTree) measurer {
@@ -119,18 +92,18 @@ func empty(tree fingerTree) fingerTree {
 	return newEmptyTree(tree.measurement().measurer)
 }
 
-func TakeUntil(tree fingerTree, f predicate) (fingerTree) {
+func takeUntil(tree fingerTree, f predicate) (fingerTree) {
 	first, _ := tree.Split(f)
 	return first
 }
 
-func DropUntil(tree fingerTree, f predicate) (fingerTree) {
+func dropUntil(tree fingerTree, f predicate) (fingerTree) {
 	_, rest := tree.Split(f)
 	return rest
 }
 
-func Each(tree fingerTree, f iterFunc) error {
-	for (!IsEmpty(tree)) {
+func each(tree fingerTree, f iterFunc) error {
+	for (!isEmpty(tree)) {
 		if !f(tree.PeekFirst()) {
 			break
 		}
@@ -139,8 +112,8 @@ func Each(tree fingerTree, f iterFunc) error {
 	return nil
 }
 
-func EachReverse(tree fingerTree, f iterFunc) error {
-	for (!IsEmpty(tree)) {
+func eachReverse(tree fingerTree, f iterFunc) error {
+	for (!isEmpty(tree)) {
 		if !f(tree.PeekLast()) {
 			break
 		}
