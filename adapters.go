@@ -166,7 +166,7 @@ func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V]) {
 }
 
 // The measurer interface
-func asMeasurer[V, M any](m any) Measurer[V, M] {
+func AsMeasurer[V, M any](m any) Measurer[V, M] {
 	if meas, ok := m.(Measurer[V, M]); !ok {
 		panic(fmt.Errorf("%w, expected a Measurer", ErrBadValue))
 	} else {
