@@ -22,6 +22,17 @@ type FingerTree[MS Measurer[V, M], V, M any] struct {
 	f fingerTree
 }
 
+type Measurer[Value, Measure any] interface {
+	// The "zero" measure
+	Identity() Measure
+	// Return the measure for a value.
+	// Measuring a value could technically produce an error but really should not.
+	// Make sure to validate inputs or to use a panic if you need error support.
+	Measure(value Value) Measure
+	// Add two measures together
+	Sum(a Measure, b Measure) Measure
+}
+
 func wrapTree[MS Measurer[V, M], V, M any](tree fingerTree) FingerTree[MS, V, M] {
 	return FingerTree[MS, V, M]{tree}
 }
@@ -155,15 +166,12 @@ func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V]) {
 }
 
 // The measurer interface
-type Measurer[Value, Measure any] interface {
-	// The "zero" measure
-	Identity() Measure
-	// Return the measure for a value.
-	// Measuring a value could technically produce an error but really should not.
-	// Make sure to validate inputs or to use a panic if you need error support.
-	Measure(value Value) Measure
-	// Add two measures together
-	Sum(a Measure, b Measure) Measure
+func asMeasurer[V, M any](m any) Measurer[V, M] {
+	if meas, ok := m.(Measurer[V, M]); !ok {
+		panic(fmt.Errorf("%w, expected a Measurer", ErrBadValue))
+	} else {
+		return meas
+	}
 }
 
 type adaptedMeasurer[MS Measurer[V, M], V, M any] struct {
