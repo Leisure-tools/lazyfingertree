@@ -7,7 +7,7 @@ import (
 type fingerTreeFunc func() fingerTree
 
 type delayed struct {
-	f fingerTreeFunc
+	f           fingerTreeFunc
 	delayedTree fingerTree
 }
 
@@ -17,8 +17,8 @@ func newDelayed(f fingerTreeFunc) *delayed {
 	return tree
 }
 
-func (f *delayed) diagstr() string {
-	return fmt.Sprintf("delayed{%s}", Diag(f.force()))
+func (f *delayed) String() string {
+	return fmt.Sprintf("delayed{%s}", f.force())
 }
 
 func (f *delayed) force() fingerTree {

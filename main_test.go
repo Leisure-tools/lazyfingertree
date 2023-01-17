@@ -1,8 +1,8 @@
 package lazyfingertree
 
 import (
-	"testing"
 	"runtime/debug"
+	"testing"
 )
 
 type width[Value any, M int] int
@@ -99,7 +99,7 @@ func testTree(t *testing.T, size int) {
 			return w > i
 		})
 		verifyTree(t, left, 0, i)
-		verifyTree(t, right, i, size - i)
+		verifyTree(t, right, i, size-i)
 	}
 }
 

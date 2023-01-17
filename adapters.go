@@ -116,8 +116,8 @@ func (t FingerTree[MS, V, M]) ToSlice() []V {
 	return result
 }
 
-func (t FingerTree[MS, V, M]) diagstr() string {
-	return Diag(t.f)
+func (t FingerTree[MS, V, M]) String() string {
+	return fmt.Sprint(t.f)
 }
 
 // Return whether the tree is empty
@@ -197,7 +197,7 @@ func (m adaptedMeasurer[MS, V, M]) Sum(a any, b any) any {
 // Go should be able to infer them from your arguments.
 // So you should just be able to say,
 //   t := FromArray(myMeasurer, []Plant{plant1, plant2})
-func FromArray[MS Measurer[V, M], V, M any](measurer MS, values[]V) FingerTree[MS, V, M] {
+func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[MS, V, M] {
 	cvt := make([]any, len(values))
 	for i := 0; i < len(values); i++ {
 		cvt[i] = values[i]

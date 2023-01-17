@@ -27,24 +27,9 @@ type measurer interface {
 	Sum(a any, b any) any
 }
 
-type diagable interface {
-	diagstr() string
-}
-
-// Return a string that represents a value. Diag calls the diagstr method if the value implements it:
-//   diagstr() string
-// otherwise, it calls fmt.Sprintf("%v", v)
-func Diag(v any) string {
-	if d, ok := v.(diagable); !ok {
-		return fmt.Sprintf("%v", v)
-	} else {
-		return d.diagstr()
-	}
-}
-
 type measurement struct {
 	measurer measurer
-	value any
+	value    any
 }
 
 func (m measurement) empty() fingerTree {
@@ -92,18 +77,18 @@ func empty(tree fingerTree) fingerTree {
 	return newEmptyTree(tree.measurement().measurer)
 }
 
-func takeUntil(tree fingerTree, f predicate) (fingerTree) {
+func takeUntil(tree fingerTree, f predicate) fingerTree {
 	first, _ := tree.Split(f)
 	return first
 }
 
-func dropUntil(tree fingerTree, f predicate) (fingerTree) {
+func dropUntil(tree fingerTree, f predicate) fingerTree {
 	_, rest := tree.Split(f)
 	return rest
 }
 
 func each(tree fingerTree, f iterFunc) error {
-	for (!isEmpty(tree)) {
+	for !isEmpty(tree) {
 		if !f(tree.PeekFirst()) {
 			break
 		}
@@ -113,7 +98,7 @@ func each(tree fingerTree, f iterFunc) error {
 }
 
 func eachReverse(tree fingerTree, f iterFunc) error {
-	for (!isEmpty(tree)) {
+	for !isEmpty(tree) {
 		if !f(tree.PeekLast()) {
 			break
 		}

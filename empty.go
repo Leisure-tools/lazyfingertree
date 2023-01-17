@@ -11,7 +11,7 @@ func newEmptyTree(measurer measurer) fingerTree {
 	return &emptyTree{measurement{measurer, measurer.Identity()}}
 }
 
-func (e *emptyTree) diagstr() string {
+func (e *emptyTree) String() string {
 	return "emptyTree{}"
 }
 

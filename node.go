@@ -1,11 +1,14 @@
 package lazyfingertree
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // A node is a measured container of either 2 or 3 sub-finger-trees.
 type node struct {
 	_measurement measurement
-	items []any
+	items        []any
 }
 
 func asNode(v any) *node {
@@ -24,7 +27,7 @@ func newNode(measurer measurer, items []any) *node {
 	return &node{measurement{measurer, m}, items}
 }
 
-func (n *node) diagstr() string {
+func (n *node) String() string {
 	var b strings.Builder
 	first := true
 	b.WriteString("node{")
@@ -34,7 +37,7 @@ func (n *node) diagstr() string {
 		} else {
 			b.WriteString(", ")
 		}
-		b.WriteString(Diag(i))
+		b.WriteString(fmt.Sprint(i))
 	}
 	b.WriteString("}")
 	return b.String()

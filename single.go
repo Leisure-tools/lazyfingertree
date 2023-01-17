@@ -5,7 +5,7 @@ import "fmt"
 // A finger-tree which contains exactly one element.
 type singleTree struct {
 	_measurement measurement
-	value any
+	value        any
 }
 
 func newSingleTree(measurer measurer, value any) *singleTree {
@@ -37,8 +37,8 @@ func makeEmptyMid(m measurer) fingerTree {
 	return newEmptyTree(nodeMeasurer{m.Identity(), m})
 }
 
-func (s *singleTree) diagstr() string {
-	return fmt.Sprintf("singleTree{%v}", Diag(s.value))
+func (s *singleTree) String() string {
+	return fmt.Sprintf("singleTree{%v}", s.value)
 }
 
 func (s *singleTree) AddFirst(value any) fingerTree {

@@ -4,11 +4,11 @@ import "fmt"
 
 // A finger-tree which contains more than one element.
 type deepTree struct {
-	measured bool
+	measured     bool
 	_measurement measurement
-	left *digit
-	mid fingerTree
-	right *digit
+	left         *digit
+	mid          fingerTree
+	right        *digit
 }
 
 func newDeepTree(measurer measurer, left *digit, mid fingerTree, right *digit) *deepTree {
@@ -21,8 +21,8 @@ func newDeepTree(measurer measurer, left *digit, mid fingerTree, right *digit) *
 	}
 }
 
-func (d *deepTree) diagstr() string {
-	return fmt.Sprintf("deepTree{%s, %s, %s}", Diag(d.left), Diag(d.mid), Diag(d.right))
+func (d *deepTree) String() string {
+	return fmt.Sprintf("deepTree{%s, %s, %s}", d.left, d.mid, d.right)
 }
 
 func (d *deepTree) measurement() measurement {
@@ -48,7 +48,7 @@ func (d *deepTree) AddFirst(v any) fingerTree {
 			d.right,
 		)
 	}
-	digits := make([]any, len(leftItems) + 1)
+	digits := make([]any, len(leftItems)+1)
 	digits[0] = v
 	copy(digits[1:], leftItems)
 	return newDeepTree(
@@ -70,7 +70,7 @@ func (d *deepTree) AddLast(v any) fingerTree {
 			newDigit(meas, []any{rightItems[3], v}),
 		)
 	}
-	digits := make([]any, len(rightItems) + 1)
+	digits := make([]any, len(rightItems)+1)
 	copy(digits, rightItems)
 	digits[len(rightItems)] = v
 	return newDeepTree(
@@ -86,7 +86,7 @@ func (d *deepTree) RemoveFirst() fingerTree {
 	if d.left.len() > 1 {
 		return newDeepTree(meas, d.left.removeFirst(), d.mid, d.right)
 	} else if !isEmpty(d.mid) {
-		newMid := newDelayed(func() fingerTree {return d.mid.RemoveFirst()})
+		newMid := newDelayed(func() fingerTree { return d.mid.RemoveFirst() })
 		midFirst := d.mid.PeekFirst()
 		return newDeepTree(meas, asNode(midFirst).toDigit(), newMid, d.right)
 	} else if d.right.len() == 1 {
@@ -100,20 +100,20 @@ func (d *deepTree) RemoveLast() fingerTree {
 	if d.right.len() > 1 {
 		return newDeepTree(meas, d.left, d.mid, d.right.removeLast())
 	} else if !isEmpty(d.mid) {
-		newMid := newDelayed(func() fingerTree {return d.mid.RemoveLast()})
+		newMid := newDelayed(func() fingerTree { return d.mid.RemoveLast() })
 		last := d.mid.PeekLast()
 		return newDeepTree(meas, d.left, newMid, asNode(last).toDigit())
 	} else if d.left.len() == 1 {
 		return newSingleTree(meas, d.left.items[0])
 	}
-	return newDeepTree(meas, d.left.slice(0, d.left.len() - 1), d.mid, d.left.slice(d.left.len() - 1, d.left.len()))
+	return newDeepTree(meas, d.left.slice(0, d.left.len()-1), d.mid, d.left.slice(d.left.len()-1, d.left.len()))
 }
 
 func (d *deepTree) PeekFirst() any {
 	return d.left.peekFirst()
 }
 
-func (d *deepTree) PeekLast() any{
+func (d *deepTree) PeekLast() any {
 	return d.right.peekLast()
 }
 
@@ -147,11 +147,11 @@ func (d *deepTree) ToSlice() []any {
 }
 
 // Helper function to split the tree into 3 parts.
-// middle value could be 
+// middle value could be
 func (d *deepTree) splitTree(predicate predicate, initial any) (fingerTree, any, fingerTree) {
 	meas := measurerFor(d)
 	leftMeasure := meas.Sum(initial, d.left._measurement.value)
-    // see if the split point is inside the left tree
+	// see if the split point is inside the left tree
 	if predicate(leftMeasure) {
 		left, mid, right := d.left.dsplit(predicate, initial)
 		return fromArray(meas, left), mid, deepLeft(meas, right, d.mid, d.right)

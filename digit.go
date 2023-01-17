@@ -1,6 +1,7 @@
 package lazyfingertree
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -8,7 +9,7 @@ import (
 // this is not a FingerTree, it only shares some of the methods
 type digit struct {
 	_measurement measurement
-	items []any
+	items        []any
 }
 
 func newDigit(measurer measurer, items []any) *digit {
@@ -19,7 +20,7 @@ func newDigit(measurer measurer, items []any) *digit {
 	return &digit{measurement{measurer, m}, items}
 }
 
-func (d *digit) diagstr() string {
+func (d *digit) String() string {
 	var b strings.Builder
 	first := true
 	b.WriteString("digit{")
@@ -29,7 +30,7 @@ func (d *digit) diagstr() string {
 		} else {
 			b.WriteString(", ")
 		}
-		b.WriteString(Diag(i))
+		b.WriteString(fmt.Sprint(i))
 	}
 	b.WriteString("}")
 	return b.String()
@@ -48,12 +49,12 @@ func (d *digit) removeFirst() *digit {
 }
 
 func (d *digit) removeLast() *digit {
-	return d.slice(0, len(d.items) - 1)
+	return d.slice(0, len(d.items)-1)
 }
 
 func (d *digit) slice(start int, end int) *digit {
 	// don't keep large, partly-used slices around
-	if end - start > 10 && cap(d.items) / 2 > end - start {
+	if end-start > 10 && cap(d.items)/2 > end-start {
 		cpy := make([]any, start-end)
 		copy(cpy, d.items[start:end])
 		return newDigit(d._measurement.measurer, cpy)
@@ -87,5 +88,5 @@ func (d *digit) dsplit(predicate predicate, initial any) ([]any, any, []any) {
 			break
 		}
 	}
-	return d.items[0:i], item, d.items[i + 1:]
+	return d.items[0:i], item, d.items[i+1:]
 }
