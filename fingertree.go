@@ -130,12 +130,3 @@ func appendTree[V any](tree fingerTree, values []V) fingerTree {
 	}
 	return tree
 }
-
-func concat3[A, B, C any](s1 []A, s2 []B, s3 []C) []any {
-	size := len(s1) + len(s2) + len(s3)
-	result := make([]any, 0, size)
-	result = append(result, s1)
-	result = append(result, s2)
-	result = append(result, s3)
-	return result
-}

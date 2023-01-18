@@ -47,6 +47,12 @@ func (n *node) toDigit() *digit {
 	return newDigit(n._measurement.measurer, n.items)
 }
 
+func dup[V any](slice []V) []V {
+	result := make([]V, len(slice))
+	copy(result, slice)
+	return result
+}
+
 // Helper function to group an array of elements into an array of nodes.
 // m: measurer for nodes
 // items: items
@@ -59,8 +65,8 @@ func nnodes(m measurer, items []any, result []*node) []*node {
 	case 2, 3:
 		return append(result, newNode(m, items))
 	case 4:
-		return append(result, newNode(m, []any{items[0], items[1]}), newNode(m, []any{items[2], items[3]}))
+		return append(result, newNode(m, dup(items[:2])), newNode(m, dup(items[2:])))
 	default:
-		return nnodes(m, items[3:], append(result, newNode(m, []any{items[0], items[1], items[2]})))
+		return nnodes(m, dup(items[3:]), append(result, newNode(m, dup(items[:3]))))
 	}
 }

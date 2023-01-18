@@ -97,8 +97,6 @@ func verifyTree(t *testing.T, tree FingerTree[width[int, int], int, int], start 
 		if !right.IsEmpty() {
 			failIfNot(t, right.PeekFirst() == offset)
 		}
-		merged := left.Concat(right)
-		failIfNot(t, same(tree.ToSlice(), merged.ToSlice()))
 	}
 }
 
@@ -108,14 +106,19 @@ func testTree(t *testing.T, size int) {
 		nums[i] = i
 	}
 	tree := newTree(nums...)
-	//fmt.Println("Tree:", tree)
 	for i := 0; i <= size; i++ {
 		left, right := tree.Split(func(w int) bool {
 			return w > i
 		})
 		verifyTree(t, left, 0, i)
 		verifyTree(t, right, i, size-i)
+		merged := left.Concat(right)
+		failIfNot(t, same(tree.ToSlice(), merged.ToSlice()))
 	}
+}
+
+func TestMerge(t *testing.T) {
+	newTree(1, 2).Concat(newTree(3, 4))
 }
 
 func TestSimple(t *testing.T) {

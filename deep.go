@@ -231,3 +231,18 @@ func app3(t1 fingerTree, items []*node, t2 fingerTree) fingerTree {
 		}),
 		d2.right)
 }
+
+func appendAll[V any](result []any, slice []V) []any {
+	for i := range slice {
+		result = result[:len(result)+1]
+		result[len(result)-1] = slice[i]
+	}
+	return result
+}
+
+func concat3[A, B, C any](s1 []A, s2 []B, s3 []C) []any {
+	result := make([]any, 0, len(s1)+len(s2)+len(s3))
+	result = appendAll(result, s1)
+	result = appendAll(result, s2)
+	return appendAll(result, s3)
+}
