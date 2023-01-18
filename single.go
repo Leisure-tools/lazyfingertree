@@ -17,12 +17,11 @@ func (s *singleTree) measurement() measurement {
 }
 
 type nodeMeasurer struct {
-	identity any
 	measurer measurer
 }
 
 func (m nodeMeasurer) Identity() any {
-	return m.identity
+	return m.measurer.Identity()
 }
 
 func (m nodeMeasurer) Measure(v any) any {
@@ -34,7 +33,7 @@ func (m nodeMeasurer) Sum(a any, b any) any {
 }
 
 func makeEmptyMid(m measurer) fingerTree {
-	return newEmptyTree(nodeMeasurer{m.Identity(), m})
+	return newEmptyTree(nodeMeasurer{m})
 }
 
 func (s *singleTree) String() string {

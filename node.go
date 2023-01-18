@@ -46,3 +46,21 @@ func (n *node) String() string {
 func (n *node) toDigit() *digit {
 	return newDigit(n._measurement.measurer, n.items)
 }
+
+// Helper function to group an array of elements into an array of nodes.
+// m: measurer for nodes
+// items: items
+// returns array of nodes
+func nodes(m measurer, items []any) []*node {
+	return nnodes(m, items, []*node{})
+}
+func nnodes(m measurer, items []any, result []*node) []*node {
+	switch len(items) {
+	case 2, 3:
+		return append(result, newNode(m, items))
+	case 4:
+		return append(result, newNode(m, []any{items[0], items[1]}), newNode(m, []any{items[2], items[3]}))
+	default:
+		return nnodes(m, items[3:], append(result, newNode(m, []any{items[0], items[1], items[2]})))
+	}
+}

@@ -66,6 +66,18 @@ func failIfErrNow(t *testing.T, err any) {
 	}
 }
 
+func same[V any](a []V, b []V) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		if any(a[i]) != any(b[i]) {
+			return false
+		}
+	}
+	return true
+}
+
 func verifyTree(t *testing.T, tree FingerTree[width[int, int], int, int], start int, length int) {
 	if length == 0 {
 		if !tree.IsEmpty() {
@@ -85,6 +97,8 @@ func verifyTree(t *testing.T, tree FingerTree[width[int, int], int, int], start 
 		if !right.IsEmpty() {
 			failIfNot(t, right.PeekFirst() == offset)
 		}
+		merged := left.Concat(right)
+		failIfNot(t, same(tree.ToSlice(), merged.ToSlice()))
 	}
 }
 
@@ -93,9 +107,10 @@ func testTree(t *testing.T, size int) {
 	for i := 0; i < len(nums); i++ {
 		nums[i] = i
 	}
-	t3 := newTree[int](nums...)
+	tree := newTree(nums...)
+	//fmt.Println("Tree:", tree)
 	for i := 0; i <= size; i++ {
-		left, right := t3.Split(func(w int) bool {
+		left, right := tree.Split(func(w int) bool {
 			return w > i
 		})
 		verifyTree(t, left, 0, i)

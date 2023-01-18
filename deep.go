@@ -124,7 +124,7 @@ func (d *deepTree) Concat(other fingerTree) fingerTree {
 	} else if s, ok := other.(*singleTree); ok {
 		return d.AddLast(s.value)
 	}
-	return app3(d, []any{}, other)
+	return app3(d, []*node{}, other)
 }
 
 func (d *deepTree) Split(predicate predicate) (fingerTree, fingerTree) {
@@ -206,7 +206,7 @@ func deepRight(meas measurer, left *digit, mid fingerTree, right []any) fingerTr
 // ts: An array of elements in between the two finger-trees
 // t2: Right finger-tree
 // returns a new FingerTree
-func app3(t1 fingerTree, items []any, t2 fingerTree) fingerTree {
+func app3(t1 fingerTree, items []*node, t2 fingerTree) fingerTree {
 	t1 = force(t1)
 	t2 = force(t2)
 	if isEmpty(t1) {
@@ -226,23 +226,8 @@ func app3(t1 fingerTree, items []any, t2 fingerTree) fingerTree {
 		newDelayed(func() fingerTree {
 			return app3(
 				d1.mid,
-				nodes(measurerFor(d1), concat(d1.right.items, items, d2.left.items), []any{}),
+				nodes(measurerFor(d1), concat3(d1.right.items, items, d2.left.items)),
 				d2.mid)
 		}),
 		d2.right)
-}
-
-// Helper function to group an array of elements into an array of nodes.
-// m: measurer for nodes
-// items: items
-// returns array of nodes
-func nodes(m measurer, items []any, result []any) []any {
-	switch len(items) {
-	case 2, 3:
-		return append(result, newNode(m, items))
-	case 4:
-		return append(result, newNode(m, []any{items[0], items[1]}), newNode(m, []any{items[2], items[3]}))
-	default:
-		return nodes(m, items[3:], append(result, newNode(m, []any{items[0], items[1], items[2]})))
-	}
 }

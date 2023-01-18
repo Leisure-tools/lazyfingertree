@@ -18,7 +18,7 @@ type Predicate[M any] func(measure M) bool
 type IterFunc[V any] func(value V) bool
 
 // FingerTree is a parameterized wrapper on a low-level finger tree.
-type FingerTree[MS Measurer[V, M], V, M any] struct {
+type FingerTree[MS Measurer[Value, Measure], Value, Measure any] struct {
 	f fingerTree
 }
 
@@ -64,12 +64,12 @@ func null[T any]() T {
 }
 
 // Add a value to the start of the tree.
-func (t FingerTree[MS, V, M]) AddFirst(value any) FingerTree[MS, V, M] {
+func (t FingerTree[MS, V, M]) AddFirst(value V) FingerTree[MS, V, M] {
 	return wrapTree[MS, V, M](t.f.AddFirst(value))
 }
 
 // Add a value to the and of the tree.
-func (t FingerTree[MS, V, M]) AddLast(value any) FingerTree[MS, V, M] {
+func (t FingerTree[MS, V, M]) AddLast(value V) FingerTree[MS, V, M] {
 	return wrapTree[MS, V, M](t.f.AddLast(value))
 }
 
@@ -128,7 +128,7 @@ func (t FingerTree[MS, V, M]) ToSlice() []V {
 }
 
 func (t FingerTree[MS, V, M]) String() string {
-	return fmt.Sprint(t.f)
+	return t.f.String()
 }
 
 // Return whether the tree is empty
@@ -184,8 +184,7 @@ func (m adaptedMeasurer[MS, V, M]) Identity() any {
 
 func (m adaptedMeasurer[MS, V, M]) Measure(value any) any {
 	if v, ok := value.(V); !ok {
-		fmt.Println("Value: ", value)
-		panic(fmt.Errorf("%w, wrong value type to measure: %s", ErrBadValue, value))
+		panic(fmt.Errorf("%w, wrong value type to measure: %v", ErrBadValue, value))
 	} else {
 		return m.am.Measure(v)
 	}
@@ -211,4 +210,12 @@ func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[
 		cvt[i] = values[i]
 	}
 	return wrapTree[MS, V, M](fromArray(adaptedMeasurer[MS, V, M]{measurer}, cvt))
+}
+
+func Concat[MS Measurer[V, M], V, M any](trees ...FingerTree[MS, V, M]) FingerTree[MS, V, M] {
+	result := newEmptyTree(trees[0].f.measurement().measurer)
+	for _, t := range trees {
+		result = result.Concat(t.f)
+	}
+	return wrapTree[MS, V, M](result)
 }

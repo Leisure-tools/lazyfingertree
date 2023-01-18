@@ -49,6 +49,7 @@ type fingerTree interface {
 	ToSlice() []any
 	measurement() measurement
 	splitTree(predicate predicate, initial any) (fingerTree, any, fingerTree)
+	fmt.Stringer
 }
 
 func isEmpty(tree fingerTree) bool {
@@ -114,7 +115,7 @@ func fromArray(measurer measurer, values []any) fingerTree {
 
 // Prepend an array of elements to the left of a tree.
 // Returns a new tree with the original one unmodified.
-func prependTree(tree fingerTree, values []any) fingerTree {
+func prependTree[V any](tree fingerTree, values []V) fingerTree {
 	for i := len(values) - 1; i >= 0; i-- {
 		tree = tree.AddFirst(values[i])
 	}
@@ -123,21 +124,18 @@ func prependTree(tree fingerTree, values []any) fingerTree {
 
 // Append an array of elements to the right of a tree.
 // Returns a new tree with the original one unmodified.
-func appendTree(tree fingerTree, values []any) fingerTree {
+func appendTree[V any](tree fingerTree, values []V) fingerTree {
 	for i := 0; i < len(values); i++ {
 		tree = tree.AddLast(values[i])
 	}
 	return tree
 }
 
-func concat(slices ...[]any) []any {
-	size := 0
-	for _, slice := range slices {
-		size += len(slice)
-	}
+func concat3[A, B, C any](s1 []A, s2 []B, s3 []C) []any {
+	size := len(s1) + len(s2) + len(s3)
 	result := make([]any, 0, size)
-	for slice := range slices {
-		result = append(result, slice)
-	}
+	result = append(result, s1)
+	result = append(result, s2)
+	result = append(result, s3)
 	return result
 }
