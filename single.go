@@ -92,3 +92,11 @@ func (s *singleTree) Split(predicate predicate) (fingerTree, fingerTree) {
 func (s *singleTree) ToSlice() []any {
 	return []any{s.value}
 }
+
+func (s *singleTree) Each(f iterFunc) bool {
+	return iterateEach(s.value, f)
+}
+
+func (s *singleTree) EachReverse(f iterFunc) bool {
+	return iterateEachReverse(s.value, f)
+}

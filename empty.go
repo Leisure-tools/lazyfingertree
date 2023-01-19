@@ -59,3 +59,11 @@ func (e *emptyTree) splitTree(pred predicate, initial any) (fingerTree, any, fin
 func (d *emptyTree) ToSlice() []any {
 	return []any{}
 }
+
+func (d *emptyTree) Each(f iterFunc) bool {
+	return true
+}
+
+func (d *emptyTree) EachReverse(f iterFunc) bool {
+	return true
+}

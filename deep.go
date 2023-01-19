@@ -139,11 +139,29 @@ func (d *deepTree) Split(predicate predicate) (fingerTree, fingerTree) {
 
 func (d *deepTree) ToSlice() []any {
 	result := make([]any, 0, 8)
-	each(d, func(value any) bool {
+	d.Each(func(value any) bool {
 		result = append(result, value)
 		return true
 	})
 	return result
+}
+
+func (d *deepTree) Each(f iterFunc) bool {
+	if d.left.Each(f) {
+		if d.mid.Each(f) {
+			return d.right.Each(f)
+		}
+	}
+	return false
+}
+
+func (d *deepTree) EachReverse(f iterFunc) bool {
+	if d.right.EachReverse(f) {
+		if d.mid.EachReverse(f) {
+			return d.left.EachReverse(f)
+		}
+	}
+	return false
 }
 
 // Helper function to split the tree into 3 parts.

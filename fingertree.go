@@ -47,6 +47,8 @@ type fingerTree interface {
 	Concat(other fingerTree) fingerTree
 	Split(predicate predicate) (fingerTree, fingerTree)
 	ToSlice() []any
+	Each(f iterFunc) bool
+	EachReverse(f iterFunc) bool
 	measurement() measurement
 	splitTree(predicate predicate, initial any) (fingerTree, any, fingerTree)
 	fmt.Stringer
@@ -88,26 +90,6 @@ func dropUntil(tree fingerTree, f predicate) fingerTree {
 	return rest
 }
 
-func each(tree fingerTree, f iterFunc) error {
-	for !isEmpty(tree) {
-		if !f(tree.PeekFirst()) {
-			break
-		}
-		tree = tree.RemoveFirst()
-	}
-	return nil
-}
-
-func eachReverse(tree fingerTree, f iterFunc) error {
-	for !isEmpty(tree) {
-		if !f(tree.PeekLast()) {
-			break
-		}
-		tree = tree.RemoveLast()
-	}
-	return nil
-}
-
 // Construct a fingertree from an array.
 func fromArray(measurer measurer, values []any) fingerTree {
 	return prependTree(newEmptyTree(measurer), values)
@@ -129,4 +111,18 @@ func appendTree[V any](tree fingerTree, values []V) fingerTree {
 		tree = tree.AddLast(values[i])
 	}
 	return tree
+}
+
+func iterateEach(item any, f iterFunc) bool {
+	if n, ok := item.(*node); ok {
+		return n.Each(f)
+	}
+	return f(item)
+}
+
+func iterateEachReverse(item any, f iterFunc) bool {
+	if n, ok := item.(*node); ok {
+		return n.EachReverse(f)
+	}
+	return f(item)
 }

@@ -90,3 +90,22 @@ func (d *digit) dsplit(predicate predicate, initial any) ([]any, any, []any) {
 	}
 	return d.items[0:i], item, d.items[i+1:]
 }
+
+func (d *digit) Each(f iterFunc) bool {
+	for _, item := range d.items {
+		if !iterateEach(item, f) {
+			return false
+		}
+	}
+	return true
+}
+
+func (d *digit) EachReverse(f iterFunc) bool {
+	for i := len(d.items); i > 0; {
+		i--
+		if !iterateEachReverse(d.items[i], f) {
+			return false
+		}
+	}
+	return true
+}

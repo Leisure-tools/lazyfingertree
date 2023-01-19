@@ -42,7 +42,7 @@ var ErrBadValue = fmt.Errorf("%w, bad value", ErrFingerTree)
 func wrapPredicate[M any](pred Predicate[M]) func(any) bool {
 	return func(m any) bool {
 		if wm, ok := m.(M); !ok {
-			panic(ErrBadValue)
+			panic(fmt.Errorf("%w, predicate input: %v", ErrBadValue, m))
 		} else {
 			return pred(wm)
 		}
@@ -52,7 +52,7 @@ func wrapPredicate[M any](pred Predicate[M]) func(any) bool {
 func wrapIter[V any](iter IterFunc[V]) func(any) bool {
 	return func(v any) bool {
 		if wv, ok := v.(V); !ok {
-			panic(ErrBadValue)
+			panic(fmt.Errorf("%w, iteration value: %v", ErrBadValue, v))
 		} else {
 			return iter(wv)
 		}
@@ -89,7 +89,7 @@ func (t FingerTree[MS, V, M]) RemoveLast() FingerTree[MS, V, M] {
 // because this will panic if it is.
 func (t FingerTree[MS, V, M]) PeekFirst() V {
 	if cv, ok := t.f.PeekFirst().(V); !ok {
-		panic(ErrBadValue)
+		panic(fmt.Errorf("%w, first value in tree: %v", ErrBadValue, t.f.PeekFirst()))
 	} else {
 		return cv
 	}
@@ -99,7 +99,7 @@ func (t FingerTree[MS, V, M]) PeekFirst() V {
 // because this will panic if it is.
 func (t FingerTree[MS, V, M]) PeekLast() V {
 	if cv, ok := t.f.PeekLast().(V); !ok {
-		panic(ErrBadValue)
+		panic(fmt.Errorf("%w, last value in tree: %v", ErrBadValue, t.f.PeekLast()))
 	} else {
 		return cv
 	}
@@ -139,7 +139,7 @@ func (t FingerTree[MS, V, M]) IsEmpty() bool {
 // Return the measure of all the tree's values
 func (t FingerTree[MS, V, M]) Measure() M {
 	if cm, ok := t.f.measurement().value.(M); !ok {
-		panic(ErrBadValue)
+		panic(fmt.Errorf("%w, measurement in tree: %v", ErrBadValue, t.f.measurement().value))
 	} else {
 		return cm
 	}
@@ -157,18 +157,18 @@ func (t FingerTree[MS, V, M]) DropUntil(pred Predicate[M]) FingerTree[MS, V, M] 
 
 // Iterate through the tree starting at the beginning
 func (t FingerTree[MS, V, M]) Each(iter IterFunc[V]) {
-	each(t.f, wrapIter(iter))
+	t.f.Each(wrapIter(iter))
 }
 
 // Iterate through the tree starting at the end
 func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V]) {
-	eachReverse(t.f, wrapIter(iter))
+	t.f.EachReverse(wrapIter(iter))
 }
 
 // The measurer interface
 func AsMeasurer[V, M any](m any) Measurer[V, M] {
 	if meas, ok := m.(Measurer[V, M]); !ok {
-		panic(fmt.Errorf("%w, expected a Measurer", ErrBadValue))
+		panic(fmt.Errorf("%w, measurer: %v", ErrBadValue, m))
 	} else {
 		return meas
 	}
@@ -184,7 +184,7 @@ func (m adaptedMeasurer[MS, V, M]) Identity() any {
 
 func (m adaptedMeasurer[MS, V, M]) Measure(value any) any {
 	if v, ok := value.(V); !ok {
-		panic(fmt.Errorf("%w, wrong value type to measure: %v", ErrBadValue, value))
+		panic(fmt.Errorf("%w, measure: %v", ErrBadValue, value))
 	} else {
 		return m.am.Measure(v)
 	}
@@ -192,9 +192,9 @@ func (m adaptedMeasurer[MS, V, M]) Measure(value any) any {
 
 func (m adaptedMeasurer[MS, V, M]) Sum(a any, b any) any {
 	if va, ok := a.(M); !ok {
-		panic(ErrBadValue)
+		panic(fmt.Errorf("%w, sum: %v", ErrBadValue, a))
 	} else if vb, ok2 := b.(M); !ok2 {
-		panic(ErrBadValue)
+		panic(fmt.Errorf("%w, sum: %v", ErrBadValue, b))
 	} else {
 		return m.am.Sum(va, vb)
 	}

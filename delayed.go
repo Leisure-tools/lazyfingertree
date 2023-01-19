@@ -71,3 +71,11 @@ func (f *delayed) Split(predicate predicate) (fingerTree, fingerTree) {
 func (f *delayed) ToSlice() []any {
 	return f.force().ToSlice()
 }
+
+func (f *delayed) Each(fun iterFunc) bool {
+	return f.force().Each(fun)
+}
+
+func (f *delayed) EachReverse(fun iterFunc) bool {
+	return f.force().EachReverse(fun)
+}

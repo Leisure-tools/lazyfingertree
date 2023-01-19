@@ -8,7 +8,7 @@ import (
 // A node is a measured container of either 2 or 3 sub-finger-trees.
 type node struct {
 	_measurement measurement
-	items        []any
+	children     []any
 }
 
 func asNode(v any) *node {
@@ -31,7 +31,7 @@ func (n *node) String() string {
 	var b strings.Builder
 	first := true
 	b.WriteString("node{")
-	for _, i := range n.items {
+	for _, i := range n.children {
 		if first {
 			first = false
 		} else {
@@ -44,7 +44,26 @@ func (n *node) String() string {
 }
 
 func (n *node) toDigit() *digit {
-	return newDigit(n._measurement.measurer, n.items)
+	return newDigit(n._measurement.measurer, n.children)
+}
+
+func (n *node) Each(f iterFunc) bool {
+	for _, item := range n.children {
+		if !iterateEach(item, f) {
+			return false
+		}
+	}
+	return true
+}
+
+func (n *node) EachReverse(f iterFunc) bool {
+	for i := len(n.children); i > 0; {
+		i--
+		if !iterateEachReverse(n.children[i], f) {
+			return false
+		}
+	}
+	return true
 }
 
 func dup[V any](slice []V) []V {
