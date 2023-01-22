@@ -14,9 +14,7 @@ Here's the go doc:
 import "github.com/zot/lazyfingertree"
 ```
 
-Package lazyfingertree implements lazy finger trees. See the \[fingertree paper\] for details.
-
-\[fingertree paper\]: http://www.soi.city.ac.uk/~ross/papers/FingerTree.html
+Package lazyfingertree implements parameterized lazy finger trees. See the \[readme\]\(README.md\) for details.
 
 ## Index
 
@@ -72,7 +70,7 @@ var ErrFingerTree = errors.New("finger tree")
 var ErrUnsupported = fmt.Errorf("%w, unsupported operation", ErrFingerTree)
 ```
 
-## type [FingerTree](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L21-L23>)
+## type [FingerTree](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L20-L22>)
 
 FingerTree is a parameterized wrapper on a low\-level finger tree.
 
@@ -82,13 +80,13 @@ type FingerTree[MS Measurer[Value, Measure], Value, Measure any] struct {
 }
 ```
 
-### func [Concat](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L215>)
+### func [Concat](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L214>)
 
 ```go
 func Concat[MS Measurer[V, M], V, M any](trees ...FingerTree[MS, V, M]) FingerTree[MS, V, M]
 ```
 
-### func [FromArray](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L207>)
+### func [FromArray](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L206>)
 
 ```go
 func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[MS, V, M]
@@ -96,7 +94,7 @@ func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[
 
 Create a finger tree. You shouldn't need to provide the type parameters, Go should be able to infer them from your arguments. So you should just be able to say, t := FromArray\(myMeasurer, \[\]Plant\{plant1, plant2\}\)
 
-### func \(FingerTree\[MS, V, M\]\) [AddFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L67>)
+### func \(FingerTree\[MS, V, M\]\) [AddFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L66>)
 
 ```go
 func (t FingerTree[MS, V, M]) AddFirst(value V) FingerTree[MS, V, M]
@@ -104,7 +102,7 @@ func (t FingerTree[MS, V, M]) AddFirst(value V) FingerTree[MS, V, M]
 
 Add a value to the start of the tree.
 
-### func \(FingerTree\[MS, V, M\]\) [AddLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L72>)
+### func \(FingerTree\[MS, V, M\]\) [AddLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L71>)
 
 ```go
 func (t FingerTree[MS, V, M]) AddLast(value V) FingerTree[MS, V, M]
@@ -112,7 +110,7 @@ func (t FingerTree[MS, V, M]) AddLast(value V) FingerTree[MS, V, M]
 
 Add a value to the and of the tree.
 
-### func \(FingerTree\[MS, V, M\]\) [Concat](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L109>)
+### func \(FingerTree\[MS, V, M\]\) [Concat](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L108>)
 
 ```go
 func (t FingerTree[MS, V, M]) Concat(other FingerTree[MS, V, M]) FingerTree[MS, V, M]
@@ -120,7 +118,7 @@ func (t FingerTree[MS, V, M]) Concat(other FingerTree[MS, V, M]) FingerTree[MS, 
 
 Join two finger trees together
 
-### func \(FingerTree\[MS, V, M\]\) [DropUntil](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L154>)
+### func \(FingerTree\[MS, V, M\]\) [DropUntil](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L153>)
 
 ```go
 func (t FingerTree[MS, V, M]) DropUntil(pred Predicate[M]) FingerTree[MS, V, M]
@@ -128,7 +126,7 @@ func (t FingerTree[MS, V, M]) DropUntil(pred Predicate[M]) FingerTree[MS, V, M]
 
 Discard all the initial values in the tree that do not satisfy the predicate
 
-### func \(FingerTree\[MS, V, M\]\) [Each](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L159>)
+### func \(FingerTree\[MS, V, M\]\) [Each](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L158>)
 
 ```go
 func (t FingerTree[MS, V, M]) Each(iter IterFunc[V])
@@ -136,7 +134,7 @@ func (t FingerTree[MS, V, M]) Each(iter IterFunc[V])
 
 Iterate through the tree starting at the beginning
 
-### func \(FingerTree\[MS, V, M\]\) [EachReverse](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L164>)
+### func \(FingerTree\[MS, V, M\]\) [EachReverse](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L163>)
 
 ```go
 func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V])
@@ -144,7 +142,7 @@ func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V])
 
 Iterate through the tree starting at the end
 
-### func \(FingerTree\[MS, V, M\]\) [IsEmpty](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L135>)
+### func \(FingerTree\[MS, V, M\]\) [IsEmpty](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L134>)
 
 ```go
 func (t FingerTree[MS, V, M]) IsEmpty() bool
@@ -152,7 +150,7 @@ func (t FingerTree[MS, V, M]) IsEmpty() bool
 
 Return whether the tree is empty
 
-### func \(FingerTree\[MS, V, M\]\) [Measure](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L140>)
+### func \(FingerTree\[MS, V, M\]\) [Measure](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L139>)
 
 ```go
 func (t FingerTree[MS, V, M]) Measure() M
@@ -160,7 +158,7 @@ func (t FingerTree[MS, V, M]) Measure() M
 
 Return the measure of all the tree's values
 
-### func \(FingerTree\[MS, V, M\]\) [PeekFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L90>)
+### func \(FingerTree\[MS, V, M\]\) [PeekFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L89>)
 
 ```go
 func (t FingerTree[MS, V, M]) PeekFirst() V
@@ -168,7 +166,7 @@ func (t FingerTree[MS, V, M]) PeekFirst() V
 
 Return the first value in the tree. Make sure to test whether the tree is empty because this will panic if it is.
 
-### func \(FingerTree\[MS, V, M\]\) [PeekLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L100>)
+### func \(FingerTree\[MS, V, M\]\) [PeekLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L99>)
 
 ```go
 func (t FingerTree[MS, V, M]) PeekLast() V
@@ -176,7 +174,7 @@ func (t FingerTree[MS, V, M]) PeekLast() V
 
 Return the last value in the tree. Make sure to test whether the tree is empty because this will panic if it is.
 
-### func \(FingerTree\[MS, V, M\]\) [RemoveFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L78>)
+### func \(FingerTree\[MS, V, M\]\) [RemoveFirst](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L77>)
 
 ```go
 func (t FingerTree[MS, V, M]) RemoveFirst() FingerTree[MS, V, M]
@@ -184,7 +182,7 @@ func (t FingerTree[MS, V, M]) RemoveFirst() FingerTree[MS, V, M]
 
 Remove the first value in the tree. Make sure to test whether the tree is empty because this will panic if it is.
 
-### func \(FingerTree\[MS, V, M\]\) [RemoveLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L84>)
+### func \(FingerTree\[MS, V, M\]\) [RemoveLast](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L83>)
 
 ```go
 func (t FingerTree[MS, V, M]) RemoveLast() FingerTree[MS, V, M]
@@ -192,7 +190,7 @@ func (t FingerTree[MS, V, M]) RemoveLast() FingerTree[MS, V, M]
 
 Remove the last value in the tree. Make sure to test whether the tree is empty because this will panic if it is.
 
-### func \(FingerTree\[MS, V, M\]\) [Split](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L115>)
+### func \(FingerTree\[MS, V, M\]\) [Split](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L114>)
 
 ```go
 func (t FingerTree[MS, V, M]) Split(predicate Predicate[M]) (FingerTree[MS, V, M], FingerTree[MS, V, M])
@@ -200,13 +198,13 @@ func (t FingerTree[MS, V, M]) Split(predicate Predicate[M]) (FingerTree[MS, V, M
 
 Split the tree. The first tree is all the starting values that do not satisfy the predicate. The second tree is the first value that satisfies the predicate, followed by the rest of the values.
 
-### func \(FingerTree\[MS, V, M\]\) [String](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L130>)
+### func \(FingerTree\[MS, V, M\]\) [String](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L129>)
 
 ```go
 func (t FingerTree[MS, V, M]) String() string
 ```
 
-### func \(FingerTree\[MS, V, M\]\) [TakeUntil](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L149>)
+### func \(FingerTree\[MS, V, M\]\) [TakeUntil](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L148>)
 
 ```go
 func (t FingerTree[MS, V, M]) TakeUntil(pred Predicate[M]) FingerTree[MS, V, M]
@@ -214,7 +212,7 @@ func (t FingerTree[MS, V, M]) TakeUntil(pred Predicate[M]) FingerTree[MS, V, M]
 
 Return all the initial values in the tree that do not satisfy the predicate
 
-### func \(FingerTree\[MS, V, M\]\) [ToSlice](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L121>)
+### func \(FingerTree\[MS, V, M\]\) [ToSlice](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L120>)
 
 ```go
 func (t FingerTree[MS, V, M]) ToSlice() []V
@@ -222,7 +220,7 @@ func (t FingerTree[MS, V, M]) ToSlice() []V
 
 Return a slice containing all of the values in the tree
 
-## type [IterFunc](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L18>)
+## type [IterFunc](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L17>)
 
 An IterFunc is a function that takes a value and returns true or false. It's used by \[Each\] and \[EachReverse\]. Returning true means to continue iteration. Returning false means to stop.
 
@@ -230,7 +228,7 @@ An IterFunc is a function that takes a value and returns true or false. It's use
 type IterFunc[V any] func(value V) bool
 ```
 
-## type [Measurer](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L25-L34>)
+## type [Measurer](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L24-L33>)
 
 ```go
 type Measurer[Value, Measure any] interface {
@@ -245,7 +243,7 @@ type Measurer[Value, Measure any] interface {
 }
 ```
 
-### func [AsMeasurer](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L169>)
+### func [AsMeasurer](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L168>)
 
 ```go
 func AsMeasurer[V, M any](m any) Measurer[V, M]
@@ -253,7 +251,7 @@ func AsMeasurer[V, M any](m any) Measurer[V, M]
 
 The measurer interface
 
-## type [Predicate](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L13>)
+## type [Predicate](<https://github.com/zot/lazyfingertree/blob/main/adapters.go#L12>)
 
 A Predicate is a function that takes a measure and returns true or false. It's used by \[Split\], \[TakeUntil\], and \[DropUntil\].
 
