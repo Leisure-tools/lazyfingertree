@@ -1,10 +1,8 @@
 Lazy Fingertree in Go based on [Qiao's JavaScript version](https://github.com/qiao/fingertree.js/) of [Ralf Hinze's and Ross Paterson's Haskell version](http://www.soi.city.ac.uk/~ross/papers/FingerTree.html)
 
-The public API is generic but the implementation is currently not generic because of some type resolution problems. In the future, if it's actually possible, the parameters could be pushed down into the implementation to make the code cleaner.
+The public API is parameterized (defined in [adapters.go](adapters.go)):
 
-[adapters.go](adapters.go) contains the public API:
-
-You provide your own object that supports the Measurer[Value, Measurement] interface. `Values` are in the leaves of the tree and your `Measurer` computes the `Measurements` in the `Measure()` and `Sum()` methods. `Measurements` can be any go objects but they *should be immutable* or there could be trouble. Please see [Ralf Hinze's and Ross Paterson's finger tree paper](http://www.soi.city.ac.uk/~ross/papers/FingerTree.html) (and the test code) for more information.
+You provide your own object that supports the Measurer[Value, Measurement] interface. `Values` are in the leaves of the tree and your `Measurer` computes the `Measurements` in the `Measure()` and `Sum()` methods. `Measurements` can be any go objects but they *should be immutable* or there could be trouble. Please see [Ralf Hinze's and Ross Paterson's finger tree paper](http://www.soi.city.ac.uk/~ross/papers/FingerTree.html) (and the [tests](main_test.go)) for more information.
 
 Here's the go doc:
 

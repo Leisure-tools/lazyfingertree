@@ -1,7 +1,6 @@
-// Package lazyfingertree implements lazy finger trees. See the [fingertree paper] for
-// details.
+// Package lazyfingertree implements parameterized lazy finger trees.
+// See the [readme](README.md) for details.
 //
-// [fingertree paper]: http://www.soi.city.ac.uk/~ross/papers/FingerTree.html
 package lazyfingertree
 
 import (
