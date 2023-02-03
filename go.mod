@@ -1,3 +1,3 @@
-module github.com/zot/lazyfingertree
+module github.com/leisure-tools/lazyfingertree
 
 go 1.19
