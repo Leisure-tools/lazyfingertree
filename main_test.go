@@ -114,6 +114,19 @@ func testTree(t *testing.T, size int) {
 		verifyTree(t, right, i, size-i)
 		merged := left.Concat(right)
 		failIfNot(t, same(tree.ToSlice(), merged.ToSlice()))
+		if i < 2 || i > size-3 {
+			continue
+		}
+		item1 := left.PeekLast()
+		left = left.RemoveLast()
+		item2 := right.PeekFirst()
+		right = right.RemoveFirst()
+		tree := right.Concat(newTree(item1, item2)).Concat(left)
+		n := make([]int, 0, size)
+		n = append(n, nums[i+1:]...)
+		n = append(n, nums[i-1], nums[i])
+		n = append(n, nums[:i-1]...)
+		failIfNot(t, same(tree.ToSlice(), n))
 	}
 }
 

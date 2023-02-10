@@ -53,12 +53,6 @@ func (d *digit) removeLast() *digit {
 }
 
 func (d *digit) slice(start int, end int) *digit {
-	// don't keep large, partly-used slices around
-	if end-start > 10 && cap(d.items)/2 > end-start {
-		cpy := make([]any, start-end)
-		copy(cpy, d.items[start:end])
-		return newDigit(d._measurement.measurer, cpy)
-	}
 	return newDigit(d._measurement.measurer, d.items[start:end])
 }
 
@@ -80,7 +74,7 @@ func (d *digit) dsplit(predicate predicate, initial any) ([]any, any, []any) {
 	}
 	m := initial
 	i := 0
-	var item any = nil
+	var item any
 	meas := d._measurement.measurer
 	for i, item = range d.items {
 		m = meas.Sum(m, meas.Measure(item))
@@ -88,7 +82,7 @@ func (d *digit) dsplit(predicate predicate, initial any) ([]any, any, []any) {
 			break
 		}
 	}
-	return d.items[0:i], item, d.items[i+1:]
+	return d.items[:i], item, d.items[i+1:]
 }
 
 func (d *digit) Each(f iterFunc) bool {

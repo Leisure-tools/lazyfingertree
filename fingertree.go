@@ -32,6 +32,10 @@ type measurement struct {
 	value    any
 }
 
+func newMeasurement(measurer measurer, value any) measurement {
+	return measurement{measurer, measurer.Measure(value)}
+}
+
 func (m measurement) empty() fingerTree {
 	return newEmptyTree(m.measurer)
 }

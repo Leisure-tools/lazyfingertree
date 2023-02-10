@@ -44,7 +44,7 @@ func (n *node) String() string {
 }
 
 func (n *node) toDigit() *digit {
-	return newDigit(n._measurement.measurer, n.children)
+	return &digit{n._measurement, n.children}
 }
 
 func (n *node) Each(f iterFunc) bool {
@@ -86,6 +86,7 @@ func nnodes(m measurer, items []any, result []*node) []*node {
 	case 4:
 		return append(result, newNode(m, dup(items[:2])), newNode(m, dup(items[2:])))
 	default:
-		return nnodes(m, dup(items[3:]), append(result, newNode(m, dup(items[:3]))))
+		result = append(result, newNode(m, dup(items[:3])))
+		return nnodes(m, items[3:], result)
 	}
 }

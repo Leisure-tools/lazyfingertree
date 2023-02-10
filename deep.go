@@ -92,7 +92,7 @@ func (d *deepTree) RemoveFirst() fingerTree {
 	} else if d.right.len() == 1 {
 		return newSingleTree(meas, d.right.items[0])
 	}
-	return newDeepTree(meas, d.right.slice(0, 1), d.mid, d.right.slice(1, d.right.len()))
+	return newDeepTree(meas, d.right.slice(0, 1), d.mid, d.right.removeFirst())
 }
 
 func (d *deepTree) RemoveLast() fingerTree {
@@ -106,7 +106,7 @@ func (d *deepTree) RemoveLast() fingerTree {
 	} else if d.left.len() == 1 {
 		return newSingleTree(meas, d.left.items[0])
 	}
-	return newDeepTree(meas, d.left.slice(0, d.left.len()-1), d.mid, d.left.slice(d.left.len()-1, d.left.len()))
+	return newDeepTree(meas, d.left.removeLast(), d.mid, d.left.slice(d.left.len()-1, d.left.len()))
 }
 
 func (d *deepTree) PeekFirst() any {
@@ -196,9 +196,10 @@ func deepLeft(meas measurer, left []any, mid fingerTree, right *digit) fingerTre
 			return fromArray(meas, right.items)
 		}
 		return newDelayed(func() fingerTree {
-			first := asNode(mid.PeekFirst()).toDigit()
-			rest := mid.RemoveFirst()
-			return newDeepTree(meas, first, rest, right)
+			return newDeepTree(meas,
+				asNode(mid.PeekFirst()).toDigit(),
+				mid.RemoveFirst(),
+				right)
 		})
 	}
 	return newDeepTree(meas, newDigit(meas, left), mid, right)
@@ -210,9 +211,10 @@ func deepRight(meas measurer, left *digit, mid fingerTree, right []any) fingerTr
 			return fromArray(meas, left.items)
 		}
 		return newDelayed(func() fingerTree {
-			butLast := mid.RemoveLast()
-			last := asNode(mid.PeekLast()).toDigit()
-			return newDeepTree(meas, left, butLast, last)
+			return newDeepTree(meas,
+				left,
+				mid.RemoveLast(),
+				asNode(mid.PeekLast()).toDigit())
 		})
 	}
 	return newDeepTree(meas, left, mid, newDigit(meas, right))

@@ -9,7 +9,7 @@ type singleTree struct {
 }
 
 func newSingleTree(measurer measurer, value any) *singleTree {
-	return &singleTree{measurement{measurer, measurer.Measure(value)}, value}
+	return &singleTree{newMeasurement(measurer, value), value}
 }
 
 func (s *singleTree) measurement() measurement {
@@ -53,7 +53,7 @@ func (s *singleTree) AddLast(value any) fingerTree {
 	m := measurerFor(s)
 	return newDeepTree(m,
 		newDigit(m, []any{s.value}),
-		newEmptyTree(m),
+		makeEmptyMid(m),
 		newDigit(m, []any{value}),
 	)
 }
