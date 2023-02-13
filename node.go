@@ -66,7 +66,7 @@ func (n *node) EachReverse(f iterFunc) bool {
 	return true
 }
 
-func dup[V any](slice []V) []V {
+func Dup[V any](slice []V) []V {
 	result := make([]V, len(slice))
 	copy(result, slice)
 	return result
@@ -84,9 +84,9 @@ func nnodes(m measurer, items []any, result []*node) []*node {
 	case 2, 3:
 		return append(result, newNode(m, items))
 	case 4:
-		return append(result, newNode(m, dup(items[:2])), newNode(m, dup(items[2:])))
+		return append(result, newNode(m, Dup(items[:2])), newNode(m, Dup(items[2:])))
 	default:
-		result = append(result, newNode(m, dup(items[:3])))
+		result = append(result, newNode(m, Dup(items[:3])))
 		return nnodes(m, items[3:], result)
 	}
 }
