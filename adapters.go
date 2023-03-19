@@ -1,6 +1,5 @@
 // Package lazyfingertree implements parameterized lazy finger trees.
 // See the [readme](README.md) for details.
-//
 package lazyfingertree
 
 import (
@@ -126,6 +125,10 @@ func (t FingerTree[MS, V, M]) ToSlice() []V {
 	return result
 }
 
+func (t FingerTree[MS, V, M]) IsZero() bool {
+	return t.f == nil
+}
+
 func (t FingerTree[MS, V, M]) String() string {
 	return t.f.String()
 }
@@ -202,7 +205,8 @@ func (m adaptedMeasurer[MS, V, M]) Sum(a any, b any) any {
 // Create a finger tree. You shouldn't need to provide the type parameters,
 // Go should be able to infer them from your arguments.
 // So you should just be able to say,
-//   t := FromArray(myMeasurer, []Plant{plant1, plant2})
+//
+//	t := FromArray(myMeasurer, []Plant{plant1, plant2})
 func FromArray[MS Measurer[V, M], V, M any](measurer MS, values []V) FingerTree[MS, V, M] {
 	cvt := make([]any, len(values))
 	for i := 0; i < len(values); i++ {
