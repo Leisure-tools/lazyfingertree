@@ -2,6 +2,7 @@ package lazyfingertree
 
 import (
 	"fmt"
+	"io"
 )
 
 type fingerTreeFunc func() fingerTree
@@ -19,6 +20,10 @@ func newDelayed(f fingerTreeFunc) *delayed {
 
 func (f *delayed) String() string {
 	return fmt.Sprintf("delayed{%s}", f.force())
+}
+
+func (f *delayed) Dump(w io.Writer, level int) {
+	f.force().Dump(w, level)
 }
 
 func (f *delayed) force() fingerTree {

@@ -4,6 +4,7 @@ package lazyfingertree
 
 import (
 	"fmt"
+	"io"
 )
 
 // A Predicate is a function that takes a measure and returns true or false.
@@ -131,6 +132,10 @@ func (t FingerTree[MS, V, M]) IsZero() bool {
 
 func (t FingerTree[MS, V, M]) String() string {
 	return t.f.String()
+}
+
+func (t FingerTree[MS, V, M]) Dump(w io.Writer, level int) {
+	t.f.Dump(w, level)
 }
 
 // Return whether the tree is empty

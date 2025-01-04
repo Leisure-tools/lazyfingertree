@@ -1,6 +1,9 @@
 package lazyfingertree
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 // An empty finger-tree.
 type emptyTree struct {
@@ -14,6 +17,8 @@ func newEmptyTree(measurer measurer) fingerTree {
 func (e *emptyTree) String() string {
 	return "emptyTree{}"
 }
+
+func (e *emptyTree) Dump(w io.Writer, level int) {}
 
 func (e *emptyTree) measurement() measurement {
 	return e._measurement

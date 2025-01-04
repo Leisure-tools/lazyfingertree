@@ -3,6 +3,8 @@ package lazyfingertree
 import (
 	"errors"
 	"fmt"
+	"io"
+	"strings"
 )
 
 var ErrFingerTree = errors.New("finger tree")
@@ -18,6 +20,28 @@ var ErrExpectedNode = fmt.Errorf("%w, expected a node", ErrFingerTree)
 type predicate func(measure any) bool
 
 type iterFunc func(value any) bool
+
+type HasBrief interface {
+	Brief() string
+}
+
+func Brief(v any) string {
+	if b, ok := v.(HasBrief); ok {
+		return b.Brief()
+	} else if s, ok := v.([]any); ok {
+		sb := strings.Builder{}
+		sb.WriteString("[")
+		for i, el := range s {
+			if i > 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(Brief(el))
+		}
+		sb.WriteString("]")
+		return sb.String()
+	}
+	return strings.ReplaceAll(fmt.Sprint(v), "\n", " ")
+}
 
 type measurer interface {
 	Identity() any
@@ -40,7 +64,7 @@ func (m measurement) empty() fingerTree {
 	return newEmptyTree(m.measurer)
 }
 
-// An EmptyTree, singleTree, or deepTree
+// An EmptyTree, singleTree, deepTree, or delayed
 type fingerTree interface {
 	AddFirst(value any) fingerTree
 	AddLast(value any) fingerTree
@@ -56,6 +80,7 @@ type fingerTree interface {
 	measurement() measurement
 	splitTree(predicate predicate, initial any) (fingerTree, any, fingerTree)
 	fmt.Stringer
+	Dump(w io.Writer, level int)
 }
 
 func isEmpty(tree fingerTree) bool {

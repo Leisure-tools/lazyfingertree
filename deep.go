@@ -1,6 +1,9 @@
 package lazyfingertree
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 // A finger-tree which contains more than one element.
 type deepTree struct {
@@ -23,6 +26,30 @@ func newDeepTree(measurer measurer, left *digit, mid fingerTree, right *digit) *
 
 func (d *deepTree) String() string {
 	return fmt.Sprintf("deepTree{%s, %s, %s}", d.left, d.mid, d.right)
+}
+
+func (d *deepTree) Dump(w io.Writer, level int) {
+	fmt.Fprintf(w, "%*sMeasurement: %s\n", level, "", d.measurement().value)
+	fmt.Fprintf(w, "%*sLeft: %s\n", level, "", d.left._measurement.value)
+	d.dumpDigits(w, level, d.left)
+	suffix := "\n"
+	mid := d.mid
+	if del, ok := d.mid.(*delayed); ok {
+		mid = del.force()
+	}
+	if _, ok := mid.(*singleTree); ok {
+		suffix = " "
+	}
+	fmt.Fprintf(w, "%*sMid:%s", level, "", suffix)
+	mid.Dump(w, level+2)
+	fmt.Fprintf(w, "%*sRight: %s\n", level, "", d.right._measurement.value)
+	d.dumpDigits(w, level, d.right)
+}
+
+func (d *deepTree) dumpDigits(w io.Writer, level int, dig *digit) {
+	for _, v := range dig.items {
+		fmt.Fprintf(w, "%*s%s %s\n", level+2, "", d.left._measurement.measurer.Measure(v), Brief(v))
+	}
 }
 
 func (d *deepTree) measurement() measurement {

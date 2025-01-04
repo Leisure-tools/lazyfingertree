@@ -1,6 +1,9 @@
 package lazyfingertree
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 // A finger-tree which contains exactly one element.
 type singleTree struct {
@@ -38,6 +41,11 @@ func makeEmptyMid(m measurer) fingerTree {
 
 func (s *singleTree) String() string {
 	return fmt.Sprintf("singleTree{%v}", s.value)
+}
+
+// single ignores level
+func (s *singleTree) Dump(w io.Writer, level int) {
+	fmt.Fprintf(w, "%s %s", s._measurement.value, Brief(s.value))
 }
 
 func (s *singleTree) AddFirst(value any) fingerTree {
