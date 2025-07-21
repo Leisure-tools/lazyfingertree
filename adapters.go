@@ -168,7 +168,7 @@ func (t FingerTree[MS, V, M]) Each(iter IterFunc[V]) {
 	t.f.Each(wrapIter(iter))
 }
 
-func (t FingerTree[MS, V, M]) Iter() iter.Seq[V] {
+func (t FingerTree[MS, V, M]) Seq() iter.Seq[V] {
 	return func(yield func(V) bool) {
 		t.Each(yield)
 	}
@@ -179,7 +179,7 @@ func (t FingerTree[MS, V, M]) EachReverse(iter IterFunc[V]) {
 	t.f.EachReverse(wrapIter(iter))
 }
 
-func (t FingerTree[MS, V, M]) IterReverse() iter.Seq[V] {
+func (t FingerTree[MS, V, M]) SeqReverse() iter.Seq[V] {
 	return func(yield func(V) bool) {
 		t.EachReverse(yield)
 	}
